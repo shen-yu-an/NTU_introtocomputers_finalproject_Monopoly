@@ -1,25 +1,27 @@
 class Tile {
-
-    static int PROPERTY;
-    static int TAX;
-    static int CHEST;
-    static int CHANCE;
-    static int PARKING;
-    static int JAIL;
-    static int GOTO_JAIL;
-    static int INFRASTRUCTURE;
-    static int GO;
+    static int PROPERTY;     // 0
+    static int TAX;          // 1
+    static int CHEST;        // 2
+    static int CHANCE;       // 3
+    static int PARKING;      // 4
+    static int JAIL;         // 5
+    static int GOTO_JAIL;    // 6
+    static int INFRASTRUCTURE; // 7 (Utility)
+    static int GO;           // 8
+    static int TRAIN;        // 9 (Railroad)
 
     field int type;
     field PropertyTile pTile;
     field TaxTile tTile;
     field ChestTile cTile;
     field ChanceTile chTile;
-    field InfrastructureTile iTile;
+    field InfrastructureTile iTile; 
     field GoTile goTile;
     field JailTile jailTile;
+    field TrainTile trTile;
 
-    function void initConstants() {
+
+    function void init() {
         let PROPERTY = 0;
         let TAX = 1;
         let CHEST = 2;
@@ -29,8 +31,11 @@ class Tile {
         let GOTO_JAIL = 6;
         let INFRASTRUCTURE = 7;
         let GO = 8;
+        let TRAIN = 9;
         return;
     }
+
+
 
     constructor Tile newProperty(int price, int rent) {
         let type = PROPERTY;
@@ -47,6 +52,12 @@ class Tile {
     constructor Tile newChest(Deck deck) {
         let type = CHEST;
         let cTile = ChestTile.new(deck);
+        return this;
+    }
+
+    constructor Tile newTrain(int price, int rent){
+        let type = TRAIN;
+        let trTile = TrainTile.new(price, rent);
         return this;
     }
 
@@ -85,9 +96,9 @@ class Tile {
         return this;
     }
 
-    method void activate(Player p) {
+    method void activate(Player p, Board board) {
         if (type = PROPERTY) {
-            do pTile.activate(p);
+            do pTile.activate(p, board);
             return;
         }
         if (type = TAX) {
@@ -95,15 +106,19 @@ class Tile {
             return;
         }
         if (type = CHEST) {
-            do cTile.activate(p);
+            do cTile.activate(p, board);
             return;
         }
         if (type = CHANCE) {
-            do chTile.activate(p);
+            do chTile.activate(p, board);
             return;
         }
         if (type = INFRASTRUCTURE) {
-            do iTile.activate(p);
+            do iTile.activate(p, board);
+            return;
+        }
+        if (type = TRAIN) {
+            do trTile.activate(p, board);
             return;
         }
         if (type = GO) {
@@ -111,11 +126,10 @@ class Tile {
             return;
         }
         if (type = JAIL) {
-            do jailTile.activate(p);
             return;
         }
         if (type = GOTO_JAIL) {
-            do jailTile.activate(p);
+            do board.sendToJail(p, jailTile);
             return;
         }
         if (type = PARKING) {

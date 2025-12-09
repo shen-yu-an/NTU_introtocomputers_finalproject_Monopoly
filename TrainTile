@@ -1,0 +1,67 @@
+class TrainTile {
+
+    field int basePrice; 
+    field Player owner;
+
+    constructor TrainTile new(int price) {
+        let basePrice = price;
+        let owner = null;
+        return this;
+    }
+
+    method void setOwner(Player p) {
+        let owner = p;
+        return;
+    }
+
+    method Player getOwner() {
+        return owner;
+    }
+
+    method int calculateRent() {
+        var int numOwnedTrains;
+        var int rent;
+        
+    
+        let numOwnedTrains = owner.getTrains(); 
+        
+      
+        if (numOwnedTrains = 1) {
+            let rent = 25;
+        }
+        if (numOwnedTrains = 2) {
+            let rent = 50;
+        }
+        if (numOwnedTrains = 3) {
+            let rent = 100;
+        }
+        if (numOwnedTrains = 4) {
+            let rent = 200;
+        }
+        
+        return rent;
+    }
+
+    method void activate(Player p, Board board) {
+        var int rentDue;
+        
+        if (owner = null) {
+            do board.askBuy(p, this, basePrice);
+            return;
+        } 
+        
+        if (~(owner = p)) { 
+            let rentDue = calculateRent(); 
+            
+            do p.pay(rentDue, board);
+            do owner.receive(rentDue);
+        }
+        return;
+    }
+
+    method void buyTile(Player p) {
+        do p.buyTrain(this, basePrice);
+        do setOwner(p);
+        return;
+    }
+}

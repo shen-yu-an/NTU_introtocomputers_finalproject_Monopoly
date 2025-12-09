@@ -1,39 +1,60 @@
 class Player {
 
+   
     static int idCounter;
 
     field int id;
     field int location;
     field int balance;
     field boolean inJail;
+    field int getOutJails; 
+    field int infras;    
+    field int trains;   
 
-    constructor Player new(int i) {
-        let id = i;
+    constructor Player new() {
+        let id = idCounter;
+        let idCounter = idCounter + 1;
+
         let location = 0;
         let inJail = false;
-        let balance = 1000;
+        let balance = 1500; 
+        
+        let getOutJails = 0;
+        let infras = 0;
+        let trains = 0;
+        
         return this;
     }
 
-    //位移
-    method void move(int steps, int boardSize) {
-        let location = (location + steps) % boardSize;
+    function void init() {
+        let idCounter = 0;
         return;
     }
 
-    //交錢
+    method void move(int steps, int boardSize) {
+        let location = location + steps;
+        
+        if (location >= boardSize) {
+            let location = location % boardSize; 
+            do receive(200);                 
+        }
+        
+        return;
+    }
+
+    // 交錢 (Pay)
     method void pay(int amount) {
         let balance = balance - amount;
         return;
     }
 
-    //賺錢
+    // 賺錢 (Receive)
     method void receive(int amount) {
         let balance = balance + amount;
         return;
     }
 
-    //買不買得起
+    // 買不買得起 (Can Afford)
     method boolean canAfford(int amount) {
         if (balance >= amount) {
             return true;
@@ -41,25 +62,60 @@ class Player {
         return false;
     }
 
-    //買土地
+    // 買土地 (Buy Regular Property)
     method void buyProperty(PropertyTile p, int price) {
         if (canAfford(price)) {
             do pay(price);
             do p.setOwner(this);
+            // NOTE: The logic for tracking color group completeness will likely be in PropertyTile
+        }
+        return;
+    }
+    
+    // 買設施 (Buy Infrastructure/Utility)
+    method void buyInfrastructure(InfrastructureTile i, int price) {
+        if (canAfford(price)) {
+            do pay(price);
+            do i.setOwner(this);
+            let infras = infras + 1;
+        }
+        return;
+    }
+    
+    // 買火車 (Buy Train/Railroad)
+    method void buyTrain(TrainTile t, int price) {
+        if (canAfford(price)) {
+            do pay(price);
+            do t.setOwner(this);
+            let trains = trains + 1;
         }
         return;
     }
 
-    //坐牢
+    // 坐牢 (Go To Jail)
     method void goToJail() {
         let inJail = true;
-        let location = 10;
+        let location = 10; // Assuming Jail is at index 10
+        // NOTE: Must also cancel any "Pass Go" money for this turn if called directly.
         return;
     }
 
-    //被釋放
+    // 被釋放 (Leave Jail)
     method void leaveJail() {
         let inJail = false;
+        return;
+    }
+    
+    //抽到get out jail card
+    method void addGetOutOfJailCard() {
+        let getOuJails = getOuJails + 1;
+        return;
+    }
+
+    //使用Get out Jail
+    method void useGetOutOfJailCard() {
+        let getOutJails = getOuJails - 1;
+        do leaveJail();
         return;
     }
 
@@ -74,5 +130,16 @@ class Player {
     method boolean isInJail() {
         return inJail;
     }
-
+    
+    method int getInfras() {
+        return infras;
+    }
+    
+    method int getTrains() {
+        return trains;
+    }
+    
+    method int getID() {
+        return id;
+    }
 }

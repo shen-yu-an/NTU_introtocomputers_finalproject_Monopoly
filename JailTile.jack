@@ -1,0 +1,11 @@
+class JailTile {
+    
+    constructor JailTile new() {
+        return this;
+    }
+
+    method void activate(Player p) {
+        return;
+    }
+    
+}

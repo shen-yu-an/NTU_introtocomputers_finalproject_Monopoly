@@ -37,7 +37,7 @@ class ChestTile {
             do player.receive(20);
         }
         if (n = 9) {
-            do player.receiveall(10);                  //還沒做
+            do player.receiveFromOther(10);                  //還沒做
         }
         if (n = 10) {
             do player.receive(100);
@@ -64,4 +64,5 @@ class ChestTile {
         }
         return;
     }
+
 }

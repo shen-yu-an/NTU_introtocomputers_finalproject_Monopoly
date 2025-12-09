@@ -9,7 +9,8 @@ class Player {
     field boolean inJail;
     field int getOutJails; 
     field int infras;    
-    field int trains;   
+    field int trains;  
+    field int jailTurns;
 
     constructor Player new() {
         let id = idCounter;
@@ -22,6 +23,7 @@ class Player {
         let getOutJails = 0;
         let infras = 0;
         let trains = 0;
+        let jailTurns = 0;
         
         return this;
     }
@@ -141,4 +143,5 @@ class Player {
         return id;
     }
 }
+
 
